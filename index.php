@@ -215,11 +215,11 @@
   <span class="badge">🚀 CI/CD Aktif</span>
 </footer>
 
-<audio id="audioRain" src="sounds/rain.mp3" loop preload="none"></audio>
-<audio id="audioCafe" src="sounds/cafe.mp3" loop preload="none"></audio>
-<audio id="audioOcean" src="sounds/ocean.mp3" loop preload="none"></audio>
-<audio id="audioFire" src="sounds/fire.mp3" loop preload="none"></audio>
-<audio id="audioWind" src="sounds/wind.mp3" loop preload="none"></audio>
+<audio id="audioRain" src="sound/rain.mp3" loop preload="none"></audio>
+<audio id="audioCafe" src="sound/cafe.mp3" loop preload="none"></audio>
+<audio id="audioOcean" src="sound/ocean.mp3" loop preload="none"></audio>
+<audio id="audioFire" src="sound/fire.mp3" loop preload="none"></audio>
+<audio id="audioWind" src="sound/wind.mp3" loop preload="none"></audio>
 
 <script>
 function updateChannel(type, value) {
