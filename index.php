@@ -74,7 +74,6 @@
     transition: opacity 0.3s;
   }
 
-  /* Rain */
   .rain .visual span {
     position: absolute;
     width: 2px; height: 15px;
@@ -84,7 +83,6 @@
   }
   @keyframes fall { to { transform: translateY(220px); } }
 
-  /* Cafe - steam bubbles */
   .cafe .visual span {
     position: absolute;
     width: 8px; height: 8px;
@@ -95,7 +93,6 @@
   }
   @keyframes rise { to { transform: translateY(-200px) scale(1.5); opacity: 0; } }
 
-  /* Ocean - waves */
   .ocean .visual .wave {
     position: absolute;
     bottom: 0; left: -50%;
@@ -109,7 +106,6 @@
     50% { transform: translateY(-10px) scaleY(1.3); }
   }
 
-  /* Fire */
   .fire .visual span {
     position: absolute;
     width: 6px; height: 16px;
@@ -124,7 +120,6 @@
     50% { transform: translateY(-15px) scale(0.8); opacity: 0.5; }
   }
 
-  /* Wind */
   .wind .visual span {
     position: absolute;
     width: 40px; height: 2px;
@@ -152,6 +147,13 @@
     border-radius: 20px;
     font-size: 12px;
     margin-top: 10px;
+  }
+  .hint {
+    font-size: 12px;
+    color: #888;
+    margin-top: 10px;
+    max-width: 400px;
+    text-align: center;
   }
 </style>
 </head>
@@ -206,16 +208,37 @@
 
 </div>
 
+<p class="hint">Geser slider untuk memutar suara. Browser memerlukan interaksi pertama sebelum audio bisa diputar otomatis.</p>
+
 <footer>
   <p>Update terakhir: <?php echo date("Y-m-d H:i:s"); ?></p>
   <span class="badge">🚀 CI/CD Aktif</span>
 </footer>
+
+<audio id="audioRain" src="sounds/rain.mp3" loop preload="none"></audio>
+<audio id="audioCafe" src="sounds/cafe.mp3" loop preload="none"></audio>
+<audio id="audioOcean" src="sounds/ocean.mp3" loop preload="none"></audio>
+<audio id="audioFire" src="sounds/fire.mp3" loop preload="none"></audio>
+<audio id="audioWind" src="sounds/wind.mp3" loop preload="none"></audio>
 
 <script>
 function updateChannel(type, value) {
   document.getElementById(type + 'Value').textContent = value + '%';
   const visual = document.getElementById(type + 'Visual');
   visual.style.opacity = value / 100;
+
+  const audioId = 'audio' + type.charAt(0).toUpperCase() + type.slice(1);
+  const audio = document.getElementById(audioId);
+  if (audio) {
+    audio.volume = value / 100;
+    if (value > 0 && audio.paused) {
+      audio.play().catch(function(err) {
+        console.log('Audio play blocked:', err);
+      });
+    } else if (value == 0) {
+      audio.pause();
+    }
+  }
 
   if (visual.dataset.built) return;
 
