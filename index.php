@@ -2,57 +2,201 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Kelompok 3 - CI/CD Project</title>
+<title>Soundscape Mixer - Kelompok 3</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e1e2f, #2d2d44);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: white;
+    padding: 30px;
+    overflow: hidden;
   }
-  .card {
-    background: white;
+  header { text-align: center; margin-bottom: 40px; }
+  header h1 { font-size: 28px; margin-bottom: 8px; }
+  header p { color: #aaa; font-size: 14px; }
+
+  .mixer {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .channel {
+    background: rgba(255,255,255,0.05);
     border-radius: 20px;
-    padding: 50px 60px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 25px;
+    width: 180px;
     text-align: center;
-    max-width: 500px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
   }
-  h1 {
-    color: #333;
-    font-size: 28px;
-    margin-bottom: 10px;
+
+  .icon { font-size: 40px; margin-bottom: 10px; }
+  .label { font-size: 15px; margin-bottom: 15px; color: #ddd; }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 5px;
+    background: #444;
+    outline: none;
   }
-  p {
-    color: #666;
-    font-size: 16px;
-    margin-bottom: 20px;
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #8e7cff;
+    cursor: pointer;
+    box-shadow: 0 0 10px #8e7cff;
+  }
+
+  .value { margin-top: 10px; font-size: 13px; color: #999; }
+
+  /* Visual animations */
+  .visual {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  /* Rain */
+  .rain .visual span {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: rgba(140,180,255,0.6);
+    top: -20px;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    to { transform: translateY(220px); }
+  }
+
+  /* Cafe - steam bubbles */
+  .cafe .visual span {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(210,160,100,0.4);
+    bottom: -10px;
+    animation: rise ease-in infinite;
+  }
+  @keyframes rise {
+    to { transform: translateY(-200px) scale(1.5); opacity: 0; }
+  }
+
+  /* Ocean - waves */
+  .ocean .visual .wave {
+    position: absolute;
+    bottom: 0; left: -50%;
+    width: 200%;
+    height: 60px;
+    background: rgba(80,180,220,0.3);
+    border-radius: 50%;
+    animation: wave 3s ease-in-out infinite;
+  }
+  @keyframes wave {
+    0%, 100% { transform: translateY(0) scaleY(1); }
+    50% { transform: translateY(-10px) scaleY(1.3); }
+  }
+
+  footer {
+    margin-top: 50px;
+    font-size: 12px;
+    color: #777;
   }
   .badge {
     display: inline-block;
-    background: #667eea;
+    background: #8e7cff;
     color: white;
-    padding: 8px 20px;
-    border-radius: 30px;
-    font-size: 14px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
     margin-top: 10px;
-  }
-  .time {
-    color: #999;
-    font-size: 13px;
-    margin-top: 20px;
   }
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🚀 Kelompok 3</h1>
-    <p>Website ini dideploy otomatis menggunakan CI/CD pipeline (GitHub Actions).</p>
-    <span class="badge">CI/CD Aktif</span>
-    <p class="time">Update terakhir: <?php echo date("Y-m-d H:i:s"); ?></p>
+
+<header>
+  <h1>🎧 Soundscape Mixer</h1>
+  <p>Atur suasana sesuai mood belajar/kerja kamu — Kelompok 3</p>
+</header>
+
+<div class="mixer">
+
+  <div class="channel rain" id="rainChannel">
+    <div class="visual" id="rainVisual"></div>
+    <div class="icon">🌧️</div>
+    <div class="label">Hujan</div>
+    <input type="range" min="0" max="100" value="0" oninput="updateChannel('rain', this.value)">
+    <div class="value" id="rainValue">0%</div>
   </div>
+
+  <div class="channel cafe" id="cafeChannel">
+    <div class="visual" id="cafeVisual"></div>
+    <div class="icon">☕</div>
+    <div class="label">Kafe</div>
+    <input type="range" min="0" max="100" value="0" oninput="updateChannel('cafe', this.value)">
+    <div class="value" id="cafeValue">0%</div>
+  </div>
+
+  <div class="channel ocean" id="oceanChannel">
+    <div class="visual" id="oceanVisual"><div class="wave"></div></div>
+    <div class="icon">🌊</div>
+    <div class="label">Ombak</div>
+    <input type="range" min="0" max="100" value="0" oninput="updateChannel('ocean', this.value)">
+    <div class="value" id="oceanValue">0%</div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Update terakhir: <?php echo date("Y-m-d H:i:s"); ?></p>
+  <span class="badge">🚀 CI/CD Aktif</span>
+</footer>
+
+<script>
+function updateChannel(type, value) {
+  document.getElementById(type + 'Value').textContent = value + '%';
+  const visual = document.getElementById(type + 'Visual');
+  visual.style.opacity = value / 100;
+
+  if (type === 'rain' && value > 0 && visual.children.length === 0) {
+    for (let i = 0; i < 20; i++) {
+      const drop = document.createElement('span');
+      drop.style.left = Math.random() * 100 + '%';
+      drop.style.animationDuration = (0.5 + Math.random()) + 's';
+      drop.style.animationDelay = Math.random() + 's';
+      visual.appendChild(drop);
+    }
+  }
+
+  if (type === 'cafe' && value > 0 && visual.children.length === 0) {
+    for (let i = 0; i < 12; i++) {
+      const bubble = document.createElement('span');
+      bubble.style.left = (20 + Math.random() * 60) + '%';
+      bubble.style.animationDuration = (2 + Math.random() * 2) + 's';
+      bubble.style.animationDelay = Math.random() * 2 + 's';
+      visual.appendChild(bubble);
+    }
+  }
+}
+</script>
+
 </body>
 </html>
